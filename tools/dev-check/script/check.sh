@@ -12,13 +12,15 @@ if (( ${#GO_FILES[@]} > 0 )); then
     printf '%s\n' "$UNFORMATTED"
     exit 1
   fi
+
+  echo "go vet"
+  go vet ./...
+
+  echo "go test"
+  go test ./...
+else
+  echo "go: no source yet; format/vet/test skipped"
 fi
-
-echo "go vet"
-go vet ./...
-
-echo "go test"
-go test ./...
 
 echo "UPD checker"
 bash "$ROOT/tools/upd-commander-checker/script/run.sh"
