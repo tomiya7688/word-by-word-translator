@@ -1,0 +1,11 @@
+# Development tools are not part of the application architecture.
+tools/**
+.tools-cache/**
+
+# Generated/build artifacts
+generated/**
+build/**
+dist/**
+
+# Test fixtures may intentionally violate architecture rules.
+testdata/**
