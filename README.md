@@ -12,13 +12,18 @@
 
 ## Dictionaries
 
-最初の実辞書として **EJDict-hand**（English -> Japanese）をMIT Release向けに採用しています。
+MIT Release向けの最初の実辞書として、両方向を用意しています。
 
-- Upstream: https://github.com/kujirahand/EJDict
-- License: Public Domain / CC0-1.0
-- Import: `tools/ejdict-import/`
+- English -> Japanese: **EJDict-hand** — Public Domain / CC0-1.0
+- Japanese -> English: **TKG Japanese-English Learner's Dictionary** — CC0-1.0
 
 完全な辞書packageは上流の固定revisionから再現生成します。詳細は `docs/dictionaries.md` を参照してください。
+
+## Japanese analysis
+
+日本語の形態素解析adapterとして Kagome v2.9.9 + IPADIC を追加しています。活用形から基本形を取得して翻訳辞書の見出し語へ接続します。
+
+IPADICには再配布時のnotice条件があるため、このadapterは現時点ではFull Release向けとして独立packageに隔離しています。詳細は `docs/analyzers.md` を参照してください。
 
 ## Development standards
 
@@ -68,4 +73,5 @@ Data
 - `docs/architecture.md` — UI / Process / Data と辞書adapter境界
 - `docs/dictionary-package.md` — 共通辞書package、manifest、TSV、release tier
 - `docs/dictionaries.md` — 採用辞書、ライセンス確認、固定revision
+- `docs/analyzers.md` — 日本語形態素解析adapter、基本形、配布区分
 - `AI_CONTEXT.md` — AI開発時の最小入口
