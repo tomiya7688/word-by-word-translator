@@ -25,6 +25,20 @@ Go sourceが存在する場合は次を順に確認する。
 
 初期状態でGo sourceがまだ無い場合は1〜3だけskipし、UPD checkerは実行する。
 
+## EJDict Importer
+
+EJDict-hand を固定upstream revisionから取得し、MIT Release向けの `Dictionary Package v1` へ変換する。
+
+```bash
+bash tools/ejdict-import/script/run.sh
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/ejdict-import/script/run.ps1
+```
+
+既定出力は `dist/dictionaries/mit/ejdict-hand/`。詳細は `tools/ejdict-import/README.md`。
+
 ## UPD Commander Checker
 
 Reference:

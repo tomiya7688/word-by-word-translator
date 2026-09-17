@@ -10,6 +10,16 @@
 - Dictionary design: 複数辞書を独立した adapter として扱い、検索結果を統合可能にする
 - Release policy: MIT release と Full release の辞書構成を分離できる設計にする
 
+## Dictionaries
+
+最初の実辞書として **EJDict-hand**（English -> Japanese）をMIT Release向けに採用しています。
+
+- Upstream: https://github.com/kujirahand/EJDict
+- License: Public Domain / CC0-1.0
+- Import: `tools/ejdict-import/`
+
+完全な辞書packageは上流の固定revisionから再現生成します。詳細は `docs/dictionaries.md` を参照してください。
+
 ## Development standards
 
 このリポジトリでは次を開発標準とします。
@@ -57,4 +67,5 @@ Data
 
 - `docs/architecture.md` — UI / Process / Data と辞書adapter境界
 - `docs/dictionary-package.md` — 共通辞書package、manifest、TSV、release tier
+- `docs/dictionaries.md` — 採用辞書、ライセンス確認、固定revision
 - `AI_CONTEXT.md` — AI開発時の最小入口
