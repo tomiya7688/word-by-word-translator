@@ -74,13 +74,20 @@ func (m DictionaryManifest) Validate() error {
 
 func (m DictionaryManifest) Metadata() contracts.DictionaryMetadata {
 	return contracts.DictionaryMetadata{
-		ID: m.ID, Name: m.Name, Source: m.Source, License: m.License,
-		SourceLanguage: m.SourceLanguage, TargetLanguage: m.TargetLanguage,
-		CommercialUse: m.CommercialUse, NoncommercialUse: m.NoncommercialUse,
-		Modification: m.Modification, Redistribution: m.Redistribution,
-		AttributionRequired: m.AttributionRequired,
+		ID:                    m.ID,
+		Name:                  m.Name,
+		Source:                m.Source,
+		License:               m.License,
+		SourceLanguage:        m.SourceLanguage,
+		TargetLanguage:        m.TargetLanguage,
+		CommercialUse:         m.CommercialUse,
+		NoncommercialUse:      m.NoncommercialUse,
+		Modification:          m.Modification,
+		Redistribution:        m.Redistribution,
+		AttributionRequired:   m.AttributionRequired,
 		LicenseNoticeRequired: m.LicenseNoticeRequired,
-		ShareAlike: m.ShareAlike, ReleaseTier: m.ReleaseTier(),
+		ShareAlike:            m.ShareAlike,
+		ReleaseTier:           m.ReleaseTier(),
 	}
 }
 
