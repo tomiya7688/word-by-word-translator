@@ -53,4 +53,8 @@ Data
   dictionary loading / adapters / indexing / cache
 ```
 
-詳細は `docs/architecture.md` と `AI_CONTEXT.md` を参照してください。
+## Documents
+
+- `docs/architecture.md` — UI / Process / Data と辞書adapter境界
+- `docs/dictionary-package.md` — 共通辞書package、manifest、TSV、release tier
+- `AI_CONTEXT.md` — AI開発時の最小入口

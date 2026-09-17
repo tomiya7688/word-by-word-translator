@@ -3,6 +3,7 @@ package processing
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path"
 	"path/filepath"
@@ -35,19 +36,36 @@ type DictionaryManifest struct {
 }
 
 func LoadDictionaryManifest(manifestPath string) (DictionaryManifest, error) {
-	raw, err := os.ReadFile(manifestPath)
+	file, err := os.Open(manifestPath)
 	if err != nil {
-		return DictionaryManifest{}, fmt.Errorf("read dictionary manifest: %w", err)
+		return DictionaryManifest{}, fmt.Errorf("open dictionary manifest: %w", err)
 	}
+	defer file.Close()
 
 	var manifest DictionaryManifest
-	if err := json.Unmarshal(raw, &manifest); err != nil {
+	decoder := json.NewDecoder(file)
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&manifest); err != nil {
 		return DictionaryManifest{}, fmt.Errorf("parse dictionary manifest: %w", err)
+	}
+	if err := ensureDictionaryManifestEOF(decoder); err != nil {
+		return DictionaryManifest{}, err
 	}
 	if err := manifest.Validate(); err != nil {
 		return DictionaryManifest{}, err
 	}
 	return manifest, nil
+}
+
+func ensureDictionaryManifestEOF(decoder *json.Decoder) error {
+	var extra any
+	if err := decoder.Decode(&extra); err != io.EOF {
+		if err == nil {
+			return fmt.Errorf("dictionary manifest contains multiple JSON values")
+		}
+		return fmt.Errorf("parse dictionary manifest trailing data: %w", err)
+	}
+	return nil
 }
 
 func (m DictionaryManifest) Validate() error {
@@ -92,10 +110,10 @@ func (m DictionaryManifest) Metadata() contracts.DictionaryMetadata {
 }
 
 func (m DictionaryManifest) ReleaseTier() contracts.ReleaseTier {
-	if !m.CommercialUse || !m.NoncommercialUse || !m.Modification || !m.Redistribution {
+	if !m.CommercialUse || !m.NoncommercialUse || !m.Redistribution {
 		return contracts.ReleaseTierUnsupported
 	}
-	if !m.AttributionRequired && !m.LicenseNoticeRequired && !m.ShareAlike {
+	if m.Modification && !m.AttributionRequired && !m.LicenseNoticeRequired && !m.ShareAlike {
 		return contracts.ReleaseTierMIT
 	}
 	return contracts.ReleaseTierFull

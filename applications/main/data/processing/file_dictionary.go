@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/tomiya7688/word-by-word-translator/applications/main/contracts"
 )
@@ -14,6 +15,8 @@ type FileDictionary struct {
 	caseSensitive bool
 	entries       map[string][]contracts.DictionaryEntry
 }
+
+var _ Dictionary = (*FileDictionary)(nil)
 
 func LoadFileDictionary(manifestPath string) (*FileDictionary, error) {
 	manifest, err := LoadDictionaryManifest(manifestPath)
@@ -51,12 +54,17 @@ func loadTSVV1(dataPath string, caseSensitive bool) (map[string][]contracts.Dict
 	defer file.Close()
 
 	entries := make(map[string][]contracts.DictionaryEntry)
+	seen := make(map[string]map[string]struct{})
 	scanner := bufio.NewScanner(file)
 	scanner.Buffer(make([]byte, 64*1024), 1024*1024)
 	lineNumber := 0
 	for scanner.Scan() {
 		lineNumber++
-		line := strings.TrimSpace(scanner.Text())
+		line := scanner.Text()
+		if !utf8.ValidString(line) {
+			return nil, fmt.Errorf("parse dictionary data line %d: invalid UTF-8", lineNumber)
+		}
+		line = strings.TrimSpace(line)
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
@@ -69,8 +77,19 @@ func loadTSVV1(dataPath string, caseSensitive bool) (map[string][]contracts.Dict
 		if headword == "" || translation == "" {
 			return nil, fmt.Errorf("parse dictionary data line %d: headword and translation are required", lineNumber)
 		}
+
 		key := normalizeDictionaryKey(headword, caseSensitive)
-		entries[key] = append(entries[key], contracts.DictionaryEntry{Headword: headword, Translation: translation})
+		if seen[key] == nil {
+			seen[key] = make(map[string]struct{})
+		}
+		if _, exists := seen[key][translation]; exists {
+			continue
+		}
+		seen[key][translation] = struct{}{}
+		entries[key] = append(entries[key], contracts.DictionaryEntry{
+			Headword:    headword,
+			Translation: translation,
+		})
 	}
 	if err := scanner.Err(); err != nil {
 		return nil, fmt.Errorf("read dictionary data: %w", err)

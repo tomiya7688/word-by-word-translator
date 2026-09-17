@@ -1,24 +1,28 @@
 # Dictionary Package v1
 
-辞書固有形式をアプリ本体へ直接持ち込まず、Data層のadapterが共通形式へ変換して扱うための初期パッケージ仕様です。
+辞書固有形式を翻訳コアへ直接持ち込まず、共通の辞書packageとして読み込むための初期仕様です。
 
-## Layout
+## 構成
+
+推奨構成:
 
 ```text
-dictionary-name/
+dictionary/
 ├─ dictionary.json
 └─ entries.tsv
 ```
 
-`dictionary.json` の `data_file` はマニフェストと同じディレクトリ以下の相対パスだけを許可します。
+manifestのファイル名自体は固定しません。`LoadFileDictionary()` へmanifestのパスを渡します。
 
 ## Manifest
+
+例:
 
 ```json
 {
   "schema_version": 1,
   "id": "example-en-ja",
-  "name": "Example English-Japanese",
+  "name": "Example EN-JA",
   "source": "https://example.invalid/dictionary",
   "license": "CC0-1.0",
   "source_language": "en",
@@ -36,29 +40,89 @@ dictionary-name/
 }
 ```
 
-`release_tier` はマニフェストへ手入力しません。ライセンス条件からアプリ側で計算します。
+未知のmanifest項目は受理しません。schemaを変更するときは `schema_version` を更新します。
 
-- `mit`: commercial / noncommercial / modification / redistribution がすべて可能で、attribution / license notice / share-alike が不要
-- `full`: 上記4利用条件を満たすが、attribution / license notice / share-alike のいずれかが必要
-- `unsupported`: 上記4利用条件のいずれかを満たさない
+`data_file` はmanifestと同じpackage内の相対パスだけを許可し、`../`、絶対パス、Windows drive pathなどpackage外へ出られる指定は拒否します。
 
-ここでの `mit` はプロジェクトの MIT Release 受入区分であり、辞書自身のライセンス名が MIT License であることを意味しません。
+## Release tier
+
+`release_tier` はmanifestから自己申告させず、ライセンス条件から自動算出します。
+
+### MIT
+
+以下をすべて満たす辞書です。
+
+- 商用利用可能
+- 非商用利用可能
+- 改変可能
+- 再配布可能
+- attribution不要
+- license notice不要
+- share-alike不要
+
+### Full
+
+商用利用・非商用利用・再配布が可能で、MIT tierの条件を満たさない辞書です。
+
+例:
+
+- attributionが必要
+- license noticeが必要
+- share-alikeが必要
+- 改変不可だが、辞書そのものの再配布と商用利用は可能
+
+個別ライセンスをFull releaseへ実際に同梱するかは、別途ライセンス確認を行います。manifestは法的判断の代替ではありません。
+
+### Unsupported
+
+次のいずれかを満たす場合です。
+
+- 商用利用不可
+- 非商用利用不可
+- 再配布不可
 
 ## TSV v1
 
-1行につき1訳語です。
+UTF-8のテキストファイルです。1行を1訳語として扱います。
 
 ```text
-hello\tこんにちは
-hello\tやあ
-world\t世界
+headword<TAB>translation
 ```
 
-- 区切りは最初のTAB
-- 空行は無視
-- `#` で始まる行はコメント
-- 同じheadwordを複数行記述可能
-- 1行あたり最大1 MiB
-- `case_sensitive: false` の場合、検索キーは小文字化して比較する
+同じ見出し語に複数訳語がある場合は複数行にします。
 
-TSV v1 は外部辞書の原形式そのものを標準化するものではありません。JMdict等の外部形式は辞書固有adapterで読み込み、この共通Dictionary interfaceへ接続します。
+```text
+hello	こんにちは
+hello	やあ
+world	世界
+```
+
+仕様:
+
+- 空行は無視
+- `#` から始まる行はコメント
+- 先頭のTABより左を見出し語、右を訳語として扱う
+- 見出し語・訳語の前後空白は除去
+- 空の見出し語・訳語はエラー
+- 不正UTF-8はエラー
+- 同一の正規化キー + 同一訳語は読み込み時に重複除去
+- 1行の上限は1 MiB
+- `case_sensitive=false` の場合、検索キーを小文字化する
+
+## Adapter boundary
+
+`FileDictionary` は既存の `Dictionary` interfaceを実装します。
+
+```text
+manifest + TSV
+      ↓
+FileDictionary
+      ↓
+Dictionary interface
+      ↓
+DictionaryStore
+      ↓
+Process translation pipeline
+```
+
+JMdict等の固有形式は、将来この共通境界へ変換する専用adapterを追加します。Process層へXML/JSON/DB固有処理を漏らしません。
