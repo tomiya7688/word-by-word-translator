@@ -30,9 +30,33 @@ MIT Release受入条件:
 
 EJDict固有の `word1, word2<TAB>meaning` 形式はimport時に個別headwordへ展開し、アプリ実行時は通常の `Dictionary Package v1` として扱います。
 
-## Candidate for Japanese -> English
+### TKG Japanese-English Learner's Dictionary
 
-日本語 -> 英語については、MIT Release向けにはCC0 / Public Domainを優先して追加調査します。
+- Status: supported import source
+- Direction: Japanese -> English
+- Project: https://github.com/tkgally/je-dict-1
+- Upstream revision: `c954d75d3bd44cab1a8e4a6045fa16b88f539722`
+- Upstream license: CC0-1.0
+- Release tier: `mit`
+- Importer: `tools/tkg-ja-en-import/`
+- Imported source: `entries_index.json`
+- Source entries at pinned revision: 30,743
+
+MIT Release受入条件:
+
+| Condition | Result |
+| --- | --- |
+| Commercial use | allowed |
+| Non-commercial use | allowed |
+| Modification | allowed |
+| Redistribution | allowed |
+| Attribution / notice required for ordinary use | no |
+
+上流READMEはCC0-1.0であることと、商用を含む任意目的でデータとコードをコピーできることを明記しています。LICENSEもCC0-1.0 Universalの法文です。
+
+全repositoryは大きいため、importerは固定revisionの `entries_index.json` だけを取得します。このindexに含まれる `headword`, `reading`, `gloss` を使い、`headword -> gloss` と `reading -> gloss` を標準TSVへ変換します。同じ読みを持つ別語は異なるglossとして保持し、複数候補を失いません。
+
+## Full Release candidates
 
 JMdict / Jitendex系は語彙量と品質の面で有力ですが、attribution / share-alike等の条件があるため、採用する場合はFull Release側で個別に扱います。
 

@@ -39,6 +39,20 @@ powershell -ExecutionPolicy Bypass -File tools/ejdict-import/script/run.ps1
 
 既定出力は `dist/dictionaries/mit/ejdict-hand/`。詳細は `tools/ejdict-import/README.md`。
 
+## TKG Japanese-English Importer
+
+TKG Japanese-English Learner's Dictionary の固定revisionから `entries_index.json` のみを取得し、日本語 -> 英語のMIT Release辞書packageへ変換する。
+
+```bash
+bash tools/tkg-ja-en-import/script/run.sh
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/tkg-ja-en-import/script/run.ps1
+```
+
+既定出力は `dist/dictionaries/mit/tkg-ja-en/`。詳細は `tools/tkg-ja-en-import/README.md`。
+
 ## UPD Commander Checker
 
 Reference:
