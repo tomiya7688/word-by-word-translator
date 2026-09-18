@@ -4,9 +4,6 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 cd "$ROOT"
 
-echo "Kagome module sums"
-go mod download -json github.com/ikawaha/kagome/v2@v2.9.9
-
 mapfile -t GO_FILES < <(git ls-files '*.go')
 if (( ${#GO_FILES[@]} > 0 )); then
   UNFORMATTED="$(gofmt -l "${GO_FILES[@]}")"
