@@ -30,7 +30,12 @@ func TestEnglishToJapaneseWordByWordPipeline(t *testing.T) {
 	dataCommander := datacommander.NewDictionaryCommander(store)
 	dataMessenger := datamessenger.NewDictionaryMessenger(dataCommander)
 	processMessenger := processmessenger.NewDictionaryMessenger(dataMessenger)
-	processor := processprocessing.NewTranslationProcessor(processprocessing.NewEnglishTokenizer())
+
+	tokenizers := processprocessing.NewTokenizerRegistry()
+	if err := tokenizers.Register(contracts.LanguageEnglish, processprocessing.NewEnglishTokenizer()); err != nil {
+		t.Fatal(err)
+	}
+	processor := processprocessing.NewTranslationProcessor(tokenizers)
 	translate := processcommander.NewTranslateCommander(processor, processMessenger)
 
 	response, err := translate.Translate(contracts.TranslationRequest{

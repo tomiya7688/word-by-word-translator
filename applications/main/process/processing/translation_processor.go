@@ -3,15 +3,15 @@ package processing
 import "github.com/tomiya7688/word-by-word-translator/applications/main/contracts"
 
 type TranslationProcessor struct {
-	tokenizer Tokenizer
+	tokenizers *TokenizerRegistry
 }
 
-func NewTranslationProcessor(tokenizer Tokenizer) *TranslationProcessor {
-	return &TranslationProcessor{tokenizer: tokenizer}
+func NewTranslationProcessor(tokenizers *TokenizerRegistry) *TranslationProcessor {
+	return &TranslationProcessor{tokenizers: tokenizers}
 }
 
-func (p *TranslationProcessor) Tokenize(text string) ([]contracts.Token, error) {
-	return p.tokenizer.Tokenize(text)
+func (p *TranslationProcessor) Tokenize(text string, language contracts.Language) ([]contracts.Token, error) {
+	return p.tokenizers.Tokenize(language, text)
 }
 
 func (p *TranslationProcessor) Merge(tokens []contracts.Token, lookups contracts.DictionaryBatchLookupResponse) []contracts.TranslatedToken {

@@ -36,7 +36,12 @@ func TestJapaneseInflectionReachesDictionaryLookup(t *testing.T) {
 	dataCommander := datacommander.NewDictionaryCommander(store)
 	dataMessenger := datamessenger.NewDictionaryMessenger(dataCommander)
 	processMessenger := processmessenger.NewDictionaryMessenger(dataMessenger)
-	processor := processing.NewTranslationProcessor(tokenizer)
+
+	tokenizers := processing.NewTokenizerRegistry()
+	if err := tokenizers.Register(contracts.LanguageJapanese, tokenizer); err != nil {
+		t.Fatal(err)
+	}
+	processor := processing.NewTranslationProcessor(tokenizers)
 	commander := processcommander.NewTranslateCommander(processor, processMessenger)
 
 	response, err := commander.Translate(contracts.TranslationRequest{

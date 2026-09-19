@@ -3,7 +3,7 @@ package commander
 import "github.com/tomiya7688/word-by-word-translator/applications/main/contracts"
 
 type TranslationProcessing interface {
-	Tokenize(text string) ([]contracts.Token, error)
+	Tokenize(text string, language contracts.Language) ([]contracts.Token, error)
 	Merge(tokens []contracts.Token, lookups contracts.DictionaryBatchLookupResponse) []contracts.TranslatedToken
 }
 
@@ -21,7 +21,7 @@ func NewTranslateCommander(processing TranslationProcessing, dictionary Dictiona
 }
 
 func (c *TranslateCommander) Translate(request contracts.TranslationRequest) (contracts.TranslationResponse, error) {
-	tokens, err := c.processing.Tokenize(request.Text)
+	tokens, err := c.processing.Tokenize(request.Text, request.SourceLanguage)
 	if err != nil {
 		return contracts.TranslationResponse{}, err
 	}
