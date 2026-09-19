@@ -8,7 +8,7 @@ import (
 )
 
 func TestMergeDeduplicatesTranslationsAndKeepsDictionarySources(t *testing.T) {
-	processor := NewTranslationProcessor(NewEnglishTokenizer())
+	processor := NewTranslationProcessor(NewTokenizerRegistry())
 	tokens := []contracts.Token{{Surface: "saw", LookupUnit: "saw", Kind: contracts.TokenKindWord}}
 	lookups := contracts.DictionaryBatchLookupResponse{Tokens: []contracts.TokenDictionaryResult{{
 		TokenIndex: 0,
@@ -31,7 +31,7 @@ func TestMergeDeduplicatesTranslationsAndKeepsDictionarySources(t *testing.T) {
 }
 
 func TestMergeMarksUnknownWord(t *testing.T) {
-	processor := NewTranslationProcessor(NewEnglishTokenizer())
+	processor := NewTranslationProcessor(NewTokenizerRegistry())
 	tokens := []contracts.Token{{Surface: "qwertymonster", LookupUnit: "qwertymonster", Kind: contracts.TokenKindWord}}
 
 	result := processor.Merge(tokens, contracts.DictionaryBatchLookupResponse{})
