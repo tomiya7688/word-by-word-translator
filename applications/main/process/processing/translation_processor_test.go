@@ -28,6 +28,74 @@ func TestMergeDeduplicatesTranslationsAndKeepsDictionarySources(t *testing.T) {
 	if !reflect.DeepEqual(result[0].Candidates[0].DictionaryIDs, []string{"a", "b"}) {
 		t.Fatalf("sources = %#v, want [a b]", result[0].Candidates[0].DictionaryIDs)
 	}
+	if len(result[0].DictionaryResults) != 2 ||
+		result[0].DictionaryResults[0].Metadata.ID != "a" ||
+		result[0].DictionaryResults[1].Metadata.ID != "b" {
+		t.Fatalf("dictionary results = %#v", result[0].DictionaryResults)
+	}
+}
+
+func TestMergeKeepsSuccessfulCandidatesWhenAnotherDictionaryFails(t *testing.T) {
+	processor := NewTranslationProcessor(NewTokenizerRegistry())
+	tokens := []contracts.Token{{Surface: "saw", LookupUnit: "saw", Kind: contracts.TokenKindWord}}
+	lookups := contracts.DictionaryBatchLookupResponse{Tokens: []contracts.TokenDictionaryResult{{
+		TokenIndex: 0,
+		Dictionaries: []contracts.DictionaryLookupResult{
+			{Metadata: contracts.DictionaryMetadata{ID: "broken"}, Error: "lookup failed"},
+			{Metadata: contracts.DictionaryMetadata{ID: "working"}, Entries: []contracts.DictionaryEntry{{Translation: "見た"}}},
+		},
+	}}}
+
+	result := processor.Merge(tokens, lookups)
+	if result[0].Status != contracts.TokenStatusSuccess {
+		t.Fatalf("status = %q, want success", result[0].Status)
+	}
+	if len(result[0].Candidates) != 1 || result[0].Candidates[0].Translation != "見た" {
+		t.Fatalf("candidates = %#v", result[0].Candidates)
+	}
+	if !reflect.DeepEqual(result[0].Candidates[0].DictionaryIDs, []string{"working"}) {
+		t.Fatalf("sources = %#v, want [working]", result[0].Candidates[0].DictionaryIDs)
+	}
+	if len(result[0].DictionaryResults) != 2 || result[0].DictionaryResults[0].Error != "lookup failed" {
+		t.Fatalf("dictionary results = %#v", result[0].DictionaryResults)
+	}
+}
+
+func TestMergePreservesDictionaryPriorityOrder(t *testing.T) {
+	processor := NewTranslationProcessor(NewTokenizerRegistry())
+	tokens := []contracts.Token{{Surface: "word", LookupUnit: "word", Kind: contracts.TokenKindWord}}
+	lookups := contracts.DictionaryBatchLookupResponse{Tokens: []contracts.TokenDictionaryResult{{
+		TokenIndex: 0,
+		Dictionaries: []contracts.DictionaryLookupResult{
+			{
+				Metadata: contracts.DictionaryMetadata{ID: "high-priority"},
+				Entries: []contracts.DictionaryEntry{
+					{Translation: "first"},
+					{Translation: "shared"},
+				},
+			},
+			{
+				Metadata: contracts.DictionaryMetadata{ID: "low-priority"},
+				Entries: []contracts.DictionaryEntry{
+					{Translation: "second"},
+					{Translation: "shared"},
+				},
+			},
+		},
+	}}}
+
+	result := processor.Merge(tokens, lookups)
+	got := []string{
+		result[0].Candidates[0].Translation,
+		result[0].Candidates[1].Translation,
+		result[0].Candidates[2].Translation,
+	}
+	if !reflect.DeepEqual(got, []string{"first", "shared", "second"}) {
+		t.Fatalf("candidate order = %#v", got)
+	}
+	if !reflect.DeepEqual(result[0].Candidates[1].DictionaryIDs, []string{"high-priority", "low-priority"}) {
+		t.Fatalf("shared sources = %#v", result[0].Candidates[1].DictionaryIDs)
+	}
 }
 
 func TestMergeMarksUnknownWord(t *testing.T) {

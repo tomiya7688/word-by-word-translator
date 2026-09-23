@@ -12,9 +12,10 @@ type TranslationCandidate struct {
 }
 
 type TranslatedToken struct {
-	Token      Token
-	Candidates []TranslationCandidate
-	Status     TokenStatus
+	Token             Token
+	Candidates        []TranslationCandidate
+	DictionaryResults []DictionaryLookupResult
+	Status            TokenStatus
 }
 
 type TranslationResponse struct {
