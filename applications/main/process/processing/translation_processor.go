@@ -33,7 +33,8 @@ func (p *TranslationProcessor) Merge(tokens []contracts.Token, lookups contracts
 			continue
 		}
 
-		merged, hadError := mergeDictionaryResults(byIndex[index].Dictionaries)
+		dictionaryResults := byIndex[index].Dictionaries
+		merged, hadError := mergeDictionaryResults(dictionaryResults)
 		status := contracts.TokenStatusDictionaryNotFound
 		if len(merged) > 0 {
 			status = contracts.TokenStatusSuccess
@@ -42,9 +43,10 @@ func (p *TranslationProcessor) Merge(tokens []contracts.Token, lookups contracts
 		}
 		token.Status = status
 		result = append(result, contracts.TranslatedToken{
-			Token:      token,
-			Candidates: merged,
-			Status:     status,
+			Token:             token,
+			Candidates:        merged,
+			DictionaryResults: dictionaryResults,
+			Status:            status,
 		})
 	}
 
