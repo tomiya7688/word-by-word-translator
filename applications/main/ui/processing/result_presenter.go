@@ -9,9 +9,15 @@ const (
 	TokenToneUnresolved TokenTone = "unresolved"
 )
 
+type PresentedCandidate struct {
+	Translation   string
+	DictionaryIDs []string
+}
+
 type PresentedToken struct {
-	Text string
-	Tone TokenTone
+	Text       string
+	Tone       TokenTone
+	Candidates []PresentedCandidate
 }
 
 func PresentTranslation(response contracts.TranslationResponse) []PresentedToken {
@@ -30,12 +36,21 @@ func presentToken(translated contracts.TranslatedToken) PresentedToken {
 		}
 	}
 
+	candidates := make([]PresentedCandidate, 0, len(translated.Candidates))
 	for _, candidate := range translated.Candidates {
-		if candidate.Translation != "" {
-			return PresentedToken{
-				Text: candidate.Translation,
-				Tone: TokenToneNormal,
-			}
+		if candidate.Translation == "" {
+			continue
+		}
+		candidates = append(candidates, PresentedCandidate{
+			Translation:   candidate.Translation,
+			DictionaryIDs: append([]string(nil), candidate.DictionaryIDs...),
+		})
+	}
+	if len(candidates) > 0 {
+		return PresentedToken{
+			Text:       candidates[0].Translation,
+			Tone:       TokenToneNormal,
+			Candidates: candidates,
 		}
 	}
 

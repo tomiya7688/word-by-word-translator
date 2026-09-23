@@ -37,14 +37,36 @@ func TestPresentTranslationKeepsUnresolvedSurfaceInOriginalOrder(t *testing.T) {
 
 	got := PresentTranslation(response)
 	want := []PresentedToken{
-		{Text: "私", Tone: TokenToneNormal},
-		{Text: "見た", Tone: TokenToneNormal},
+		{Text: "私", Tone: TokenToneNormal, Candidates: []PresentedCandidate{{Translation: "私"}}},
+		{Text: "見た", Tone: TokenToneNormal, Candidates: []PresentedCandidate{{Translation: "見た"}}},
 		{Text: "qwertymonster", Tone: TokenToneUnresolved},
-		{Text: "昨日", Tone: TokenToneNormal},
-		{Text: ".", Tone: TokenToneNormal},
+		{Text: "昨日", Tone: TokenToneNormal, Candidates: []PresentedCandidate{{Translation: "昨日"}}},
+		{Text: ".", Tone: TokenToneNormal, Candidates: []PresentedCandidate{{Translation: "."}}},
 	}
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("presented = %#v, want %#v", got, want)
+	}
+}
+
+func TestPresentTranslationKeepsAllMergedCandidatesAndSources(t *testing.T) {
+	got := PresentTranslation(contracts.TranslationResponse{Tokens: []contracts.TranslatedToken{{
+		Token: contracts.Token{Surface: "saw"},
+		Candidates: []contracts.TranslationCandidate{
+			{Translation: "見た", DictionaryIDs: []string{"a", "b"}},
+			{Translation: "見ました", DictionaryIDs: []string{"b"}},
+		},
+		Status: contracts.TokenStatusSuccess,
+	}}})
+
+	if len(got) != 1 || got[0].Text != "見た" {
+		t.Fatalf("presented = %#v", got)
+	}
+	want := []PresentedCandidate{
+		{Translation: "見た", DictionaryIDs: []string{"a", "b"}},
+		{Translation: "見ました", DictionaryIDs: []string{"b"}},
+	}
+	if !reflect.DeepEqual(got[0].Candidates, want) {
+		t.Fatalf("candidates = %#v, want %#v", got[0].Candidates, want)
 	}
 }
 

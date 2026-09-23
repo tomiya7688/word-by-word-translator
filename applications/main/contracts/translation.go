@@ -4,6 +4,7 @@ type TranslationRequest struct {
 	Text           string
 	SourceLanguage Language
 	TargetLanguage Language
+	DictionaryIDs  []string
 }
 
 type TranslationCandidate struct {

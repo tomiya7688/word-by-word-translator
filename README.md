@@ -25,6 +25,12 @@ MIT Release向けの最初の実辞書として、両方向を用意していま
 
 IPADICには再配布時のnotice条件があるため、このadapterは現時点ではFull Release向けとして独立packageに隔離しています。詳細は `docs/analyzers.md` を参照してください。
 
+## UI
+
+UI層には、文章入力・日本語↔英語の方向切替・複数辞書選択・翻訳実行・単語単位結果を1つの状態として扱うMVP screen modelがあります。
+
+未解決語は原文を保持して赤色表示し、複数辞書の統合候補は出典辞書ID付きで表示できます。詳細は `docs/ui.md` を参照してください。
+
 ## Development standards
 
 このリポジトリでは次を開発標準とします。
@@ -74,5 +80,5 @@ Data
 - `docs/dictionary-package.md` — 共通辞書package、manifest、TSV、release tier
 - `docs/dictionaries.md` — 採用辞書、ライセンス確認、固定revision
 - `docs/analyzers.md` — 日本語形態素解析adapter、基本形、配布区分
-- `docs/ui.md` — 翻訳結果のUI表示モデルと未解決語の視覚表現
+- `docs/ui.md` — 翻訳画面状態、辞書選択、結果表示、未解決語の視覚表現
 - `AI_CONTEXT.md` — AI開発時の最小入口

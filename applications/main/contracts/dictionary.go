@@ -45,6 +45,7 @@ type DictionaryBatchLookupRequest struct {
 	Tokens         []Token
 	SourceLanguage Language
 	TargetLanguage Language
+	DictionaryIDs  []string
 }
 
 type DictionaryBatchLookupResponse struct {
