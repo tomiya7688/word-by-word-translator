@@ -29,6 +29,7 @@ func (c *TranslateCommander) Translate(request contracts.TranslationRequest) (co
 		Tokens:         tokens,
 		SourceLanguage: request.SourceLanguage,
 		TargetLanguage: request.TargetLanguage,
+		DictionaryIDs:  append([]string(nil), request.DictionaryIDs...),
 	})
 	return contracts.TranslationResponse{Tokens: c.processing.Merge(tokens, lookups)}, nil
 }

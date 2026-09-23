@@ -24,6 +24,9 @@ func (s *DictionaryStore) LookupBatch(request contracts.DictionaryBatchLookupReq
 			if metadata.SourceLanguage != request.SourceLanguage || metadata.TargetLanguage != request.TargetLanguage {
 				continue
 			}
+			if !dictionarySelected(request.DictionaryIDs, metadata.ID) {
+				continue
+			}
 
 			entries, err := dictionary.Lookup(token.LookupUnit)
 			lookup := contracts.DictionaryLookupResult{Metadata: metadata, Entries: entries}
@@ -39,4 +42,16 @@ func (s *DictionaryStore) LookupBatch(request contracts.DictionaryBatchLookupReq
 		})
 	}
 	return contracts.DictionaryBatchLookupResponse{Tokens: results}
+}
+
+func dictionarySelected(selected []string, dictionaryID string) bool {
+	if len(selected) == 0 {
+		return true
+	}
+	for _, selectedID := range selected {
+		if selectedID == dictionaryID {
+			return true
+		}
+	}
+	return false
 }
