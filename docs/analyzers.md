@@ -41,3 +41,15 @@ Kagome本体のコードはMIT Licenseです。一方、採用するIPADICデー
 - MIT Release向けには、将来notice不要の解析データまたは別tokenizerを用意する
 
 この分類はプロジェクトの配布ポリシー上の判定であり、個別ライセンスの法的判断を置き換えるものではありません。
+
+
+## Vendored notice sources
+
+Full Release生成で必要な固定versionのnotice原文は `licenses/analyzers/` に保持する。
+
+- `kagome/LICENSE.txt` — Kagome v2.9.9
+- `kagome-dict/LICENSE.txt` — kagome-dict v1.1.0
+- `kagome-dict-ipa/LICENSE.txt` — IPA dictionary wrapper
+- `kagome-dict-ipa/NOTICE.txt` — mecab-ipadic由来notice
+
+release builderはFull Release生成時にこれらの存在を必須チェックし、`licenses/analyzers/` と `THIRD_PARTY_LICENSES.md` へ反映する。

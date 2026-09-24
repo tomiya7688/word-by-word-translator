@@ -31,6 +31,16 @@ UI層には、文章入力・日本語↔英語の方向切替・複数辞書選
 
 未解決語は原文を保持して赤色表示し、複数辞書の統合候補は出典辞書ID付きで表示できます。詳細は `docs/ui.md` を参照してください。
 
+## Releases
+
+配布物は `MIT Release` / `Full Release` を自動生成できます。MIT版は厳格な辞書条件を満たすものだけ、Full版はnotice付きassetも同梱します。
+
+```bash
+bash tools/release-builder/script/run.sh
+```
+
+アプリ本体はルートの `LICENSE` にあるMIT Licenseです。辞書・解析assetのライセンスは分離して `release.json` / `THIRD_PARTY_LICENSES.md` / 個別noticeへ記録します。詳細は `docs/releases.md`。
+
 ## Development standards
 
 このリポジトリでは次を開発標準とします。
@@ -81,4 +91,5 @@ Data
 - `docs/dictionaries.md` — 採用辞書、ライセンス確認、固定revision
 - `docs/analyzers.md` — 日本語形態素解析adapter、基本形、配布区分
 - `docs/ui.md` — 翻訳画面状態、辞書選択、結果表示、未解決語の視覚表現
+- `docs/releases.md` — MIT / Full Release の自動選別、notice、配布構成
 - `AI_CONTEXT.md` — AI開発時の最小入口

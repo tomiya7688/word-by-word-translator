@@ -53,6 +53,20 @@ powershell -ExecutionPolicy Bypass -File tools/tkg-ja-en-import/script/run.ps1
 
 既定出力は `dist/dictionaries/mit/tkg-ja-en/`。詳細は `tools/tkg-ja-en-import/README.md`。
 
+## Release Builder
+
+固定revisionの辞書生成と、MIT / Full Release bundleの生成:
+
+```bash
+bash tools/release-builder/script/run.sh
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/release-builder/script/run.ps1
+```
+
+既定出力は `dist/releases/mit/` と `dist/releases/full/`。詳細は `tools/release-builder/README.md`。
+
 ## UPD Commander Checker
 
 Reference:
