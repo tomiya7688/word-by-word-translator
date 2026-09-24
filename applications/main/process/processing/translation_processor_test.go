@@ -110,3 +110,29 @@ func TestMergeMarksUnknownWord(t *testing.T) {
 		t.Fatalf("surface changed to %q", result[0].Token.Surface)
 	}
 }
+
+func TestMergeMarksLookupErrorWhenEveryDictionaryFails(t *testing.T) {
+	processor := NewTranslationProcessor(NewTokenizerRegistry())
+	tokens := []contracts.Token{{Surface: "brokenword", LookupUnit: "brokenword", Kind: contracts.TokenKindWord}}
+	lookups := contracts.DictionaryBatchLookupResponse{Tokens: []contracts.TokenDictionaryResult{{
+		TokenIndex: 0,
+		Dictionaries: []contracts.DictionaryLookupResult{
+			{Metadata: contracts.DictionaryMetadata{ID: "broken-a"}, Error: "lookup failed"},
+			{Metadata: contracts.DictionaryMetadata{ID: "broken-b"}, Error: "lookup failed"},
+		},
+	}}}
+
+	result := processor.Merge(tokens, lookups)
+	if len(result) != 1 {
+		t.Fatalf("result count = %d, want 1", len(result))
+	}
+	if result[0].Status != contracts.TokenStatusLookupError {
+		t.Fatalf("status = %q, want lookup_error", result[0].Status)
+	}
+	if result[0].Token.Surface != "brokenword" {
+		t.Fatalf("surface = %q, want original", result[0].Token.Surface)
+	}
+	if len(result[0].Candidates) != 0 {
+		t.Fatalf("candidates = %#v, want none", result[0].Candidates)
+	}
+}
