@@ -111,7 +111,6 @@ func TestMergeMarksUnknownWord(t *testing.T) {
 	}
 }
 
-
 func TestMergeMarksLookupErrorWhenEveryDictionaryFails(t *testing.T) {
 	processor := NewTranslationProcessor(NewTokenizerRegistry())
 	tokens := []contracts.Token{{Surface: "brokenword", LookupUnit: "brokenword", Kind: contracts.TokenKindWord}}
