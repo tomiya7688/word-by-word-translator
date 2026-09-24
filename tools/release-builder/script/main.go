@@ -19,9 +19,9 @@ import (
 
 const (
 	releaseSchemaVersion = 1
-	dictionaryManifest    = "dictionary.json"
-	attributionFile       = "ATTRIBUTION.txt"
-	licenseFile           = "LICENSE.txt"
+	dictionaryManifest   = "dictionary.json"
+	attributionFile      = "ATTRIBUTION.txt"
+	licenseFile          = "LICENSE.txt"
 )
 
 type releaseKind string
