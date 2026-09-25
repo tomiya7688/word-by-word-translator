@@ -91,6 +91,7 @@ Data
 ## Documents
 
 - `docs/specification.md` — MVPの目的・非目標・token/status・部分失敗・受入基準
+- `docs/language-dictionary-extension.md` — 対応言語、Analyzer登録、多辞書選択・優先順位・統合・言語追加手順
 - `docs/architecture.md` — UI / Process / Data と辞書adapter境界
 - `docs/dictionary-package.md` — 共通辞書package、manifest、TSV、release tier
 - `docs/dictionaries.md` — 採用辞書、ライセンス確認、固定revision

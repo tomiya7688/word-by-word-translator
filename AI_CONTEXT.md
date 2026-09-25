@@ -9,6 +9,7 @@
 
 ## Source of Truth
 - Product behavior: `docs/specification.md`
+- Language / dictionary extension: `docs/language-dictionary-extension.md`
 - Architecture: `docs/architecture.md`
 - Project overview: `README.md`
 - Issues / tasks: GitHub Issues
