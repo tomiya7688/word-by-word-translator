@@ -2,7 +2,7 @@
 
 この文書を、単語単位翻訳アプリのMVPにおける**プロダクト挙動のSource of Truth**とする。
 
-実装構造は `docs/architecture.md`、辞書形式は `docs/dictionary-package.md`、配布区分は `docs/releases.md` を参照する。
+実装構造は `docs/architecture.md`、言語・多辞書拡張は `docs/language-dictionary-extension.md`、辞書形式は `docs/dictionary-package.md`、配布区分は `docs/releases.md` を参照する。
 
 ## 1. Purpose
 
@@ -227,6 +227,7 @@ MVPの主要回帰条件:
 
 ## 13. Related specifications
 
+- `docs/language-dictionary-extension.md` — language / analyzer / multi-dictionary extension policy
 - `docs/architecture.md` — UI / Process / Data boundary
 - `docs/analyzers.md` — Analyzer implementation and distribution notes
 - `docs/dictionary-package.md` — Dictionary Package v1
