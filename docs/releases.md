@@ -2,6 +2,8 @@
 
 本プロジェクトはアプリ本体のライセンスと、辞書・解析assetの配布条件を分離する。
 
+翻訳辞書の受入基準とtier判定は `docs/license-policy.md` をSource of Truthとする。
+
 - アプリ本体: MIT License
 - MIT Release: プロジェクト定義の厳格な配布tier
 - Full Release: notice / attribution等が必要なassetも同梱可能な配布tier

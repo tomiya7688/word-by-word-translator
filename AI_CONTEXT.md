@@ -10,6 +10,7 @@
 ## Source of Truth
 - Product behavior: `docs/specification.md`
 - Language / dictionary extension: `docs/language-dictionary-extension.md`
+- Dictionary license policy: `docs/license-policy.md`
 - Architecture: `docs/architecture.md`
 - Project overview: `README.md`
 - Issues / tasks: GitHub Issues
