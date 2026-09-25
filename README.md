@@ -2,6 +2,10 @@
 
 単語単位で原文と訳語を対応させる翻訳アプリです。
 
+## Product specification
+
+MVPのプロダクト挙動は `docs/specification.md` をSource of Truthとします。
+
 ## Implementation
 
 - Main language: **Go**
@@ -86,6 +90,7 @@ Data
 
 ## Documents
 
+- `docs/specification.md` — MVPの目的・非目標・token/status・部分失敗・受入基準
 - `docs/architecture.md` — UI / Process / Data と辞書adapter境界
 - `docs/dictionary-package.md` — 共通辞書package、manifest、TSV、release tier
 - `docs/dictionaries.md` — 採用辞書、ライセンス確認、固定revision
