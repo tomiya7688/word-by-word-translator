@@ -1,5 +1,7 @@
 # Dictionary Package v1
 
+ライセンス受入基準とtier判定のSource of Truthは `docs/license-policy.md`。この文書ではpackage schema上の要約だけを記載する。
+
 辞書固有形式を翻訳コアへ直接持ち込まず、共通の辞書packageとして読み込むための初期仕様です。
 
 ## 構成
@@ -71,7 +73,7 @@ manifestのファイル名自体は固定しません。`LoadFileDictionary()` �
 - share-alikeが必要
 - 改変不可だが、辞書そのものの再配布と商用利用は可能
 
-個別ライセンスをFull releaseへ実際に同梱するかは、別途ライセンス確認を行います。manifestは法的判断の代替ではありません。
+個別ライセンスをFull releaseへ実際に同梱するかは、`docs/license-policy.md` の採用レビューに従います。manifestと自動tier判定は法的判断の代替ではありません。
 
 ### Unsupported
 

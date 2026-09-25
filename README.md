@@ -21,7 +21,7 @@ MIT Release向けの最初の実辞書として、両方向を用意していま
 - English -> Japanese: **EJDict-hand** — Public Domain / CC0-1.0
 - Japanese -> English: **TKG Japanese-English Learner's Dictionary** — CC0-1.0
 
-完全な辞書packageは上流の固定revisionから再現生成します。詳細は `docs/dictionaries.md` を参照してください。
+完全な辞書packageは上流の固定revisionから再現生成します。採用辞書は `docs/dictionaries.md`、ライセンス受入基準は `docs/license-policy.md` を参照してください。
 
 ## Japanese analysis
 
@@ -94,6 +94,7 @@ Data
 - `docs/language-dictionary-extension.md` — 対応言語、Analyzer登録、多辞書選択・優先順位・統合・言語追加手順
 - `docs/architecture.md` — UI / Process / Data と辞書adapter境界
 - `docs/dictionary-package.md` — 共通辞書package、manifest、TSV、release tier
+- `docs/license-policy.md` — 辞書ライセンス受入基準、MIT / Full / Unsupported判定、追加時レビュー
 - `docs/dictionaries.md` — 採用辞書、ライセンス確認、固定revision
 - `docs/analyzers.md` — 日本語形態素解析adapter、基本形、配布区分
 - `docs/ui.md` — 翻訳画面状態、辞書選択、結果表示、未解決語の視覚表現

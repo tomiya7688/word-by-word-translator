@@ -2,7 +2,7 @@
 
 この文書は、本プロジェクトで実際に採用・検証した辞書とrelease区分を記録します。
 
-`MIT Release` / `Full Release` の判定ロジックと共通package形式は `docs/dictionary-package.md` を参照してください。
+`MIT Release` / `Full Release` の受入基準は `docs/license-policy.md`、共通package形式は `docs/dictionary-package.md` を参照してください。
 
 ## Supported
 
