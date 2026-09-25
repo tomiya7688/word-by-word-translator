@@ -137,3 +137,12 @@ MIT ReleaseではIPADIC由来assetを同梱しない。Full Releaseではnotice�
 - TKG Japanese-English Learner's Dictionary: Japanese -> English
 
 したがって現時点ではMIT / Fullの翻訳辞書集合は同じで、Full側には追加で日本語解析用third-party noticeが入る。将来Full tier辞書を追加するとrelease builderが自動的に差分を作る。
+
+
+## Runnable CLI boundary
+
+`cmd/word-by-word-translator` currently supports both MVP language directions and imports the Kagome/IPADIC Japanese Analyzer path. Therefore it is classified as a Full runtime.
+
+The current release builder produces dictionary/license asset bundles; it does not yet compile or package this command as cross-platform binaries.
+
+A bidirectional executable for the project-defined MIT Release requires a Japanese Analyzer whose distributed runtime assets satisfy the MIT Release asset policy.
