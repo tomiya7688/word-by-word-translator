@@ -151,3 +151,12 @@ MIT release と Full release は、可能な限り同一coreを使用し、搭�
 - build / validation helpers
 
 ツールのcacheやcloneは `.tools-cache/` 等の生成領域に置き、通常コンテキストと配布物から除外する。
+
+
+## Application composition root
+
+`cmd/word-by-word-translator/` is the executable composition root.
+
+A composition root may instantiate UI / Process / Data components together to wire dependencies. This is not a UI -> Data dependency because the command package is outside the three application layers and contains no application processing logic.
+
+The composition root must not implement tokenization, dictionary lookup, merge/ranking, or presentation algorithms. Those remain in the corresponding Processing packages.

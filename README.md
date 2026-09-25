@@ -14,6 +14,20 @@ MVPのプロダクト挙動は `docs/specification.md` をSource of Truthとし�
 - Dictionary design: 複数辞書を独立した adapter として扱い、検索結果を統合可能にする
 - Release policy: MIT release と Full release の辞書構成を分離できる設計にする
 
+## Run the CLI
+
+The current runnable MVP is a Full-runtime CLI because Japanese source analysis uses Kagome + IPADIC.
+
+```bash
+go run ./cmd/word-by-word-translator \
+  -from en \
+  -to ja \
+  -dictionary /path/to/dictionary.json \
+  -- "I saw qwertymonster yesterday."
+```
+
+See `docs/cli.md` for dictionary selection, stdin, compact output, and Japanese -> English usage.
+
 ## Dictionaries
 
 MIT Release向けの最初の実辞書として、両方向を用意しています。
@@ -91,6 +105,7 @@ Data
 ## Documents
 
 - `docs/specification.md` — MVPの目的・非目標・token/status・部分失敗・受入基準
+- `docs/cli.md` — 起動可能なCLI、辞書選択、stdin、Full-runtime境界
 - `docs/language-dictionary-extension.md` — 対応言語、Analyzer登録、多辞書選択・優先順位・統合・言語追加手順
 - `docs/architecture.md` — UI / Process / Data と辞書adapter境界
 - `docs/dictionary-package.md` — 共通辞書package、manifest、TSV、release tier
