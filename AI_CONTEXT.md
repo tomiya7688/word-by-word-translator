@@ -8,6 +8,7 @@
 - Main language / runtime: Go
 
 ## Source of Truth
+- Product behavior: `docs/specification.md`
 - Architecture: `docs/architecture.md`
 - Project overview: `README.md`
 - Issues / tasks: GitHub Issues
@@ -19,8 +20,9 @@
 ## Read First
 1. current task / issue
 2. この `AI_CONTEXT.md`
-3. 対象sourceと対応test
-4. 必要な場合だけ `docs/architecture.md`
+3. product behaviorに関わる場合は `docs/specification.md`
+4. 対象sourceと対応test
+5. 必要な場合だけ `docs/architecture.md`
 
 ## Ignore Normally
 - build outputs / cache
