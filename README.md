@@ -1,117 +1,181 @@
 # word-by-word-translator
 
-単語単位で原文と訳語を対応させる翻訳アプリです。
+文章を**単語単位**に分解し、それぞれを辞書で引いて原文順に表示する翻訳アプリです。
 
-## Product specification
+一般的な機械翻訳のように文全体を自然な訳文へ作り直すのではなく、原文の構造を残したまま辞書引きの手間を減らすことを目的としています。
 
-MVPのプロダクト挙動は `docs/specification.md` をSource of Truthとします。
+例:
 
-## Implementation
-
-- Main language: **Go**
-- Architecture: **UPD Commander Base Design** をプロジェクト向けに適用
-- AI-assisted development: **ai-context-reducer** の最小コアを標準採用
-- Dictionary design: 複数辞書を独立した adapter として扱い、検索結果を統合可能にする
-- Release policy: MIT release と Full release の辞書構成を分離できる設計にする
-
-## Run the CLI
-
-The current runnable MVP is a Full-runtime CLI because Japanese source analysis uses Kagome + IPADIC.
-
-```bash
-go run ./cmd/word-by-word-translator \
-  -from en \
-  -to ja \
-  -dictionary /path/to/dictionary.json \
-  -- "I saw qwertymonster yesterday."
+```text
+I saw qwertymonster yesterday.
+↓
+私 見た qwertymonster 昨日 .
 ```
 
-See `docs/cli.md` for dictionary selection, stdin, compact output, and Japanese -> English usage.
+辞書で見つからない語は原文のまま残し、未解決語として表示します。
 
-## Dictionaries
+## 現在の状態
 
-MIT Release向けの最初の実辞書として、両方向を用意しています。
+現在は次の機能が実装されています。
 
-- English -> Japanese: **EJDict-hand** — Public Domain / CC0-1.0
-- Japanese -> English: **TKG Japanese-English Learner's Dictionary** — CC0-1.0
+- 英語 → 日本語
+- 日本語 → 英語
+- 単語単位の翻訳
+- 複数辞書の利用と結果統合
+- 未知語・未解決語の原文保持
+- CLIからの実行
+- MIT Release / Full Release 用の辞書・ライセンス構成生成
 
-完全な辞書packageは上流の固定revisionから再現生成します。採用辞書は `docs/dictionaries.md`、ライセンス受入基準は `docs/license-policy.md` を参照してください。
+デスクトップGUIは **Wails v2 + Svelte + TypeScript** で実装予定です。
 
-## Japanese analysis
+## ソースコードはどこにあるか
 
-日本語の形態素解析adapterとして Kagome v2.9.9 + IPADIC を追加しています。活用形から基本形を取得して翻訳辞書の見出し語へ接続します。
+アプリ本体のソースコードは主に `applications/main/` にあります。
 
-IPADICには再配布時のnotice条件があるため、このadapterは現時点ではFull Release向けとして独立packageに隔離しています。詳細は `docs/analyzers.md` を参照してください。
+```text
+applications/main/
+├─ contracts/     共通データ型・インターフェース
+├─ process/       単語分割、翻訳処理、辞書結果の統合
+├─ data/          辞書の読み込み・検索・管理
+└─ ui/            入力状態・表示用処理
 
-## UI
+cmd/word-by-word-translator/
+└─ CLIの起動コード
 
-UI層には、文章入力・日本語↔英語の方向切替・複数辞書選択・翻訳実行・単語単位結果を1つの状態として扱うMVP screen modelがあります。
+tools/
+├─ ejdict-import/       EJDict-handの取り込み
+├─ tkg-ja-en-import/    TKG日英辞書の取り込み
+└─ release-builder/     配布用データの生成
+```
 
-未解決語は原文を保持して赤色表示し、複数辞書の統合候補は出典辞書ID付きで表示できます。詳細は `docs/ui.md` を参照してください。
+翻訳処理を追いたい場合は、まず以下を見ると全体を把握しやすいです。
 
-## Releases
+- `applications/main/process/processing/translation_processor.go`
+- `applications/main/process/processing/english_tokenizer.go`
+- `applications/main/process/processing/kagome/japanese_tokenizer.go`
+- `applications/main/data/processing/dictionary_store.go`
+- `cmd/word-by-word-translator/main.go`
 
-配布物は `MIT Release` / `Full Release` を自動生成できます。MIT版は厳格な辞書条件を満たすものだけ、Full版はnotice付きassetも同梱します。
+## 使用している辞書
+
+現在の初期辞書は次の2つです。
+
+| 翻訳方向 | 辞書 |
+| --- | --- |
+| 英語 → 日本語 | EJDict-hand |
+| 日本語 → 英語 | TKG Japanese-English Learner's Dictionary |
+
+どちらもプロジェクト定義の `MIT Release` 条件を満たす辞書として採用しています。
+
+辞書の詳細・固定revision・ライセンス確認は `docs/dictionaries.md` を参照してください。
+
+## CLIで試す
+
+### 必要なもの
+
+- Go 1.22 以上
+
+まず辞書データを生成します。
+
+Linux / macOS:
 
 ```bash
 bash tools/release-builder/script/run.sh
 ```
 
-アプリ本体はルートの `LICENSE` にあるMIT Licenseです。辞書・解析assetのライセンスは分離して `release.json` / `THIRD_PARTY_LICENSES.md` / 個別noticeへ記録します。詳細は `docs/releases.md`。
+Windows PowerShell:
 
-## Development standards
-
-このリポジトリでは次を開発標準とします。
-
-### ai-context-reducer
-
-- `AI_CONTEXT.md` をAI向けの小さな入口にする
-- Search first, read second
-- Goal / Required / Acceptance が揃ったら探索を止める
-- Source of Truth を明示する
-- unrelated refactor を現在タスクへ混ぜない
-- targeted validation を優先する
-- 未確認領域は `Unverified` として明示する
-- remote更新があり得るため、実装前は compact remote delta を優先する
-
-Reference: https://github.com/tomiya7688/ai-context-reducer
-
-### UPD Commander Base Design
-
-- UI / Process / Data の責務を分離する
-- Commander は呼び出しの指揮だけを担当し、実処理を持たない
-- Messenger は層間通信だけを担当する
-- 実処理は各層の Processing に置く
-- UI から Data への直接依存を作らない
-- Process はUI表示方式を知らない
-- Data はUIや翻訳処理の判断を知らない
-- 開発チェックに Go UPD Commander Checker を組み込む
-
-Reference: https://github.com/tomiya7688/upd-commander-base-design
-
-## Planned layer mapping
-
-```text
-UI
-  CLI / GUI input and presentation
-        ↕ Messenger
-Process
-  tokenization / lookup orchestration / result merge / language pipeline
-        ↕ Messenger
-Data
-  dictionary loading / adapters / indexing / cache
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/release-builder/script/run.ps1
 ```
 
-## Documents
+### 英語 → 日本語
 
-- `docs/specification.md` — MVPの目的・非目標・token/status・部分失敗・受入基準
-- `docs/cli.md` — 起動可能なCLI、辞書選択、stdin、Full-runtime境界
-- `docs/language-dictionary-extension.md` — 対応言語、Analyzer登録、多辞書選択・優先順位・統合・言語追加手順
-- `docs/architecture.md` — UI / Process / Data と辞書adapter境界
-- `docs/dictionary-package.md` — 共通辞書package、manifest、TSV、release tier
-- `docs/license-policy.md` — 辞書ライセンス受入基準、MIT / Full / Unsupported判定、追加時レビュー
-- `docs/dictionaries.md` — 採用辞書、ライセンス確認、固定revision
-- `docs/analyzers.md` — 日本語形態素解析adapter、基本形、配布区分
-- `docs/ui.md` — 翻訳画面状態、辞書選択、結果表示、未解決語の視覚表現
-- `docs/releases.md` — MIT / Full Release の自動選別、notice、配布構成
-- `AI_CONTEXT.md` — AI開発時の最小入口
+```bash
+go run ./cmd/word-by-word-translator \
+  -from en \
+  -to ja \
+  -dictionary dist/dictionaries/mit/ejdict-hand/dictionary.json \
+  -- "I saw qwertymonster yesterday."
+```
+
+### 日本語 → 英語
+
+```bash
+go run ./cmd/word-by-word-translator \
+  -from ja \
+  -to en \
+  -dictionary dist/dictionaries/mit/tkg-ja-en/dictionary.json \
+  -- "食べました"
+```
+
+標準入力にも対応しています。
+
+```bash
+printf '食べました\n' | go run ./cmd/word-by-word-translator \
+  -from ja \
+  -to en \
+  -dictionary dist/dictionaries/mit/tkg-ja-en/dictionary.json
+```
+
+CLIの全オプションは `docs/cli.md` を参照してください。
+
+## このアプリがしないこと
+
+このアプリは、少なくともMVPでは次のことを目的としていません。
+
+- 文脈を考慮した自然な全文翻訳
+- 原文語順の並べ替え
+- 文脈から訳語を1つに決めること
+- 学習者の代わりに文全体を解釈すること
+
+Analyzerも全文を理解するためではなく、**辞書を引ける単位へ分解し、必要なら辞書形へ戻すため**に使います。
+
+## ライセンスと配布
+
+アプリ本体は MIT License です。
+
+辞書や解析用データには、それぞれ別のライセンスが適用されます。
+
+本プロジェクトでは配布物を次の2系統に分けます。
+
+- **MIT Release**: 商用利用・非商用利用・改変・再配布が可能で、通常利用時の明示義務がない辞書だけを含む
+- **Full Release**: noticeや帰属表示などが必要な辞書・解析データも条件を守って含められる
+
+詳しくは以下を参照してください。
+
+- `docs/license-policy.md`
+- `docs/releases.md`
+
+## ドキュメント
+
+利用・仕様を知りたい場合:
+
+- `docs/specification.md` — アプリの動作仕様
+- `docs/cli.md` — CLIの使い方
+- `docs/dictionaries.md` — 採用辞書
+- `docs/ui.md` — UIの表示仕様
+
+実装を知りたい場合:
+
+- `docs/architecture.md` — UI / Process / Data の構成
+- `docs/language-dictionary-extension.md` — 言語・辞書の追加方法
+- `docs/dictionary-package.md` — 辞書package形式
+- `docs/analyzers.md` — 単語分割・日本語解析
+- `docs/testing.md` — テスト方針
+
+## 開発者向け
+
+主な実装言語は **Go** です。
+
+GUIは **Wails v2 + Svelte + TypeScript** を採用します。
+
+内部アーキテクチャは UI / Process / Data の責務を分離し、辞書固有処理はadapterとしてData側に閉じ込めます。
+
+開発時の詳細な規約やAI向け入口は以下を参照してください。
+
+- `AI_CONTEXT.md`
+- `docs/architecture.md`
+- GitHub Issues
+
+READMEでは利用者向け情報を優先し、詳細な内部設計や開発運用ルールは各ドキュメントへ分離します。
